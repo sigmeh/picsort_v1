@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+def main():
+	with open('term.html','r') as f:
+		term = f.read()
+	print 'content-type:text/html\n'
+	print term
+if __name__ == '__main__':
+	main()
