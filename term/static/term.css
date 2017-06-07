@@ -59,3 +59,54 @@
 .x:hover{
 	background-color:green;
 }
+#image_viewer_outer{
+	
+	padding:1px;
+	display:inline-block;
+	
+}
+#image_panel {
+	vertical-align:top;
+}
+#container{
+		
+	vertical-align:top;
+	display:inline-block;
+}
+#image_viewer_inner{
+	height:200px;
+	width:300px;
+	background-color:rgb(220,220,220);
+	position:relative;
+}
+*{
+	
+}
+h5{
+	display:inline-block;
+	vertical-align:top;
+}
+#image_panel{
+	height:20px;
+	vertical-align:top;
+}
+span{
+	vertical-align:top;
+}
+#button_panel{
+	margin-top:2px;
+	padding:15px;
+	display:inline-block;
+	vertical-align:top;
+}
+span{
+	
+}
+#dir_list_source{
+	display:none;
+}
+#dir_list_outer{
+	width:160px;
+	display:inline-block;
+	margin-top:2px;
+}

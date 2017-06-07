@@ -10,12 +10,23 @@ var history_pointer = 0;
 function print(msg){$('#msgbox').append(msg);}
 function con(msg){console.log(msg);} 
 
+//
+//
+var startup_commands = 'up; up; up; cd dumm; cd pics'.split(';');
+//
+//
+
+
 // Start new session with server on page load
 $(document).ready(function(){
 	$('#commandline').focus();
 	screen_append('## Starting new session ##');
 	$('#screen').focus();
 	submit( 'new session' );
+	for ( c = 0; c < startup_commands.length; c++ ){
+		submit( startup_commands[c].trim() );
+	}
+
 });
 
 // Print to terminal screen 
@@ -58,18 +69,12 @@ function submit(submission){
 			result = JSON.parse(result);
 			data = result.data;
 			current_dir = result.current_dir;
-			
-			//populate_dir_list();
-			/*
-			if (result.run_dir_check == true){
-				populate_dir_list();	// function in picsort.js
-			}
-			*/
+
 			if (data == 'session started'){
 				data = '';
 			}
 			else{
-				populate_dir_list();
+				populate_dir_list(null);
 			}
 			
 			ps( data=data.trim().split('\n'), newline=null, is_command=false, current_dir=current_dir );
@@ -80,10 +85,7 @@ function submit(submission){
 
 // Keypress handler
 $(document).on('keydown','#screen',function(e){
-	//con(e.which+' '+e.key);
-	//con('cmd_history: '+cmd_history);
-	//con('history_pointer: '+history_pointer);
-	//con('current_command: '+current_command);	
+
 	switch(e.which){
 		
 		// ----- Enter ----- //
