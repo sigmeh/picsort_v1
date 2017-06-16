@@ -12,7 +12,8 @@ function con(msg){console.log(msg);}
 
 //
 //
-var startup_commands = 'up; up; up; cd dumm; cd pics'.split(';');
+//var startup_commands = 'up; up; up; cd try; cd pics; cd pics'.split(';');
+var startup_commands = 'cd ../../../try/pics/pics'.split(';');
 //
 //
 
@@ -66,6 +67,7 @@ function submit(submission){
 		url:'term.py',
 		data:{'package':JSON.stringify(submission)},
 		success:function(result){
+			con(result);
 			result = JSON.parse(result);
 			data = result.data;
 			current_dir = result.current_dir;
@@ -122,6 +124,8 @@ $(document).on('keydown','#screen',function(e){
 		
 		
 		// ----- v (key): handle paste [Cmd+v] ----- //
+		
+		/*
 		case 86:
 			// Exploit time delay in paste process to:
 			// 1. Switch focus to #dummybox textarea (hidden) immediately
@@ -129,7 +133,8 @@ $(document).on('keydown','#screen',function(e){
 			// 3. Transfer pasted contents to #screen
 			// 4. Transfer focus to #screen
 			// 5. Delete #dummybox value
-			if ( command_key_down ){				
+			if ( command_key_down ){	
+				con('here');			
 				$('#dummybox').focus();
 				setTimeout(function(){
 					var pasted = $('#dummybox').val();
@@ -141,7 +146,15 @@ $(document).on('keydown','#screen',function(e){
 				},1);
 				break;
 			} 
-		
+			else{
+				con('yes');
+				
+				current_command += e.key;
+				con(current_command);
+				
+				ps(data=e.key, newline=false, is_command=true);
+			}
+			*/
 		
 		// ----- ArrowUp (key) - retrieve command from history (backwards) ----- //	
 		case 38:
@@ -185,13 +198,29 @@ $(document).on('keydown','#screen',function(e){
 		
 		// ----- Default keydown - add keystroke to current_command ----- //	
 		default:
-			if ( $.inArray(e.which,ignore_keys) != -1 ){
+			con('default');
+			
+			if ( $.inArray(e.which, ignore_keys) != -1 ){
 				return;
 			}
 			else if ( ! command_key_down ){
 				current_command += e.key;
 				ps(data=e.key, newline=false, is_command=true);
-			}			
+			}
+			
+			else if ( command_key_down && e.which == 86){	
+				// Moved this code from case selection (e.which == 86) where pressing v caused a bug		
+				$('#dummybox').focus();
+				setTimeout(function(){
+					var pasted = $('#dummybox').val();
+					current_command += pasted;
+					var screen_text = $('#screen').val();
+					$('#screen').val( screen_text + pasted );
+					$('#screen').focus();
+					$('#dummybox').val('');
+				},1);
+				break;
+			} 			
 	}
 });
 
