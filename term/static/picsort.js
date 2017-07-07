@@ -37,14 +37,19 @@ function submit_picsort( submission ){
 		url		: 'picsort.py',
 		data	: { 'package' : JSON.stringify(submission) }, 
 		success : function( result ){
+			var re = /\{[^]*\}/;		// extract json data from internal python prints (that get dumped here)
+			var json = result.match(re)[0];
+			var python_stdout = result.replace(re,'').trim();
+			con( 'python print statements from last action: ' + (python_stdout ? python_stdout : 'None') );
+			result = JSON.parse(json);		
 			
-			result = JSON.parse(result);		
 			f = result.callback_function;
 			a = result.args;
 			if ( a ){
 			
 				eval( f+'('+JSON.stringify(a)+')' );	//callback
 			}
+			
 		}
 	});
 }
