@@ -23,20 +23,40 @@
 		
 		
 		<span class=''>
+		
+			<!-- terminal screen -->
 			<span id='term' class='term border'>
 				<textarea id='screen' class='border' autocomplete='off' readonly></textarea>	
 			</span>
 			<br>
 			
+			<!-- dir list 
 			<div id='dir_list_outer' class='border'>
-				<span>Available dirs:</span>
+				<span class='section_title'>Available dirs:</span>
 				<br>
 				<div id='dir_list' class=''></div>
 			</div>
+			-->
 			
+			<!-- button panel -->
 			<div id='button_panel' class='border'>
-				<button id='use_current_dir'>Use current dir</button>
+				<span class='section_title'>Button panel:</span>
+				<br>
+				<button id='picsort_current_dir'>Picsort current dir</button>
 			</div>
+			
+			<!-- file list -->
+			<div id='file_list_outer' class='border'>
+				<span class='section_title'>Pics in this directory: </span>
+				<br>
+				<div id='pic_list' class='border'></div>
+				<br>
+				<span class='section_title'>Non-pics in this directory: </span>
+				<br>
+				<div id='nonpic_list'></div>
+			</div>	
+			
+					
 		</span>
 		
 		
@@ -54,8 +74,8 @@
 		</div>
 		
 		<span id='image_panel'>
-			Filename: 
-				<span class='' id='filename'>filename</span>
+			image_name: 
+				<span class='' id='image_name'>image_name</span>
 			<br>
 			Place in Directory: 
 				<span id='dir_buttons'></span>

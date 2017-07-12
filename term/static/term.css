@@ -4,6 +4,13 @@
 	border-color:black;
 	border-width:1px;
 }
+#button_panel{
+	margin-top:2px;
+	padding:10px;
+	display:inline-block;
+	vertical-align:top;
+	height:200px;
+}
 #commandline{
 	width:550px;
 	height:18px;
@@ -11,6 +18,11 @@
 }
 #commandline:focus{
 	outline:none;
+}
+#container{
+		
+	vertical-align:top;
+	display:inline-block;
 }
 .dir{
 	vertical-align:top;
@@ -23,6 +35,15 @@
 	display:inline-block;
 	padding:10px;
 }
+#dir_list_outer{
+	width:160px;
+	display:inline-block;
+	margin-top:2px;
+	padding:10px;
+}
+#dir_list_source{
+	display:none;
+}
 #dummybox{
 
 	height:1px;
@@ -33,15 +54,88 @@
 	
 	position:absolute;
 }
+.file_list_file{
+	
+}
+#file_list_outer{
+	padding:10px;
+	margin-top:2px;
+	vertical-align:top;
+	display:inline-block;
+}
+.file_list_pic:hover{
+	cursor:pointer;
+	
+}
+.file_list_pic{
+	padding-left:4px;
+}
+h5{
+	display:inline-block;
+	vertical-align:top;
+}
+
+.hovered_pic{
+	background-color:rgb(231,252,253);
+}
+#image{
+	
+}
+#image_panel{
+	overflow: scroll;
+	width:500px;
+}
+#image_panel {
+	vertical-align:top;
+}
+#image_viewer_inner{
+	height:202px;
+	width:300px;
+	background-color:rgb(220,220,220);
+	text-align:center;
+}
+#image_viewer_outer{
+	
+	padding:1px;
+	display:inline-block;
+	overflow:hidden;
+	width:302px;
+}
+#nonpic_list{
+	margin-left:3px;
+	font-family:Helvetica;
+	font-size:13px;	
+	color:gray;	
+}
+#pic_list{
+	margin-left:3px;
+	font-family:Helvetica;
+	font-size:13px;	
+	overflow:scroll;
+	height:300px;
+	width:300px;
+	
+}
 #screen{
 	height:400px;
 	width:576px;
 	font-family:'Courier';
 	font-size:12px;
 	resize:none;
+	vertical-align:top;
+	
+}
+.section_title{
+	font-size:14px;
+}
+.selected_pic{
+	background-color:rgb(255,208,162);
+}
+span{
 	
 }
 #term{
+	padding:1px;
 	
 	
 				
@@ -58,55 +152,4 @@
 }
 .x:hover{
 	background-color:green;
-}
-#image_viewer_outer{
-	
-	padding:1px;
-	display:inline-block;
-	
-}
-#image_panel {
-	vertical-align:top;
-}
-#container{
-		
-	vertical-align:top;
-	display:inline-block;
-}
-#image_viewer_inner{
-	height:200px;
-	width:300px;
-	background-color:rgb(220,220,220);
-	position:relative;
-}
-*{
-	
-}
-h5{
-	display:inline-block;
-	vertical-align:top;
-}
-#image_panel{
-	height:20px;
-	vertical-align:top;
-}
-span{
-	vertical-align:top;
-}
-#button_panel{
-	margin-top:2px;
-	padding:15px;
-	display:inline-block;
-	vertical-align:top;
-}
-span{
-	
-}
-#dir_list_source{
-	display:none;
-}
-#dir_list_outer{
-	width:160px;
-	display:inline-block;
-	margin-top:2px;
 }
