@@ -26,20 +26,53 @@
 }
 .dir{
 	vertical-align:top;
+	border-width:1px;
+	border-style:solid;
+	border-color:rgb(51,132,62);
+	display:block;
+	margin:1px;
+	padding-right:3px;
+	padding-left:3px;
+	padding-top:1px;
+	background-color:rgb(242,255,255);
+	
+}
+.rmdir{
+	vertical-align:top;
+	border-width:1px;
+	border-style:solid;
+	border-color:rgb(51,132,62);
+	display:block;
+	margin:1px;
+	padding-right:3px;
+	padding-left:3px;
+	padding-top:1px;
+	background-color:rgb(242,255,255);
+	color:rgb(55,143,145);
+}
+#rmdir_list{
+	display:inline-block;
+}
+#rmdir_list_outer{
+	display:inline-block;
+	vertical-align:top;
+	margin-top:2px;
+	padding:1px;
+	margin-left:-3px;
 }
 .dir:hover{
 	cursor:pointer;
-	background-color:yellow;
+	background-color:rgb(249,249,227);
 }
-#dir_list{
+#dir_list{	
 	display:inline-block;
-	padding:10px;
 }
 #dir_list_outer{
-	width:160px;
+	vertical-align:top;
 	display:inline-block;
 	margin-top:2px;
-	padding:10px;
+	padding:1px;
+	margin-left:4px;
 }
 #dir_list_source{
 	display:none;
@@ -61,7 +94,7 @@
 	padding:10px;
 	margin-top:2px;
 	vertical-align:top;
-	display:inline-block;
+	display:none;
 }
 .file_list_pic:hover{
 	cursor:pointer;

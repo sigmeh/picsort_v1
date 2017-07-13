@@ -18,7 +18,12 @@
 </head>
 <body>
 	<textarea id='dummybox' autocomplete='off'></textarea>
-		
+	
+<!--==============================================
+	-
+	-	CONTAINER
+	-	
+	-->		
 	<div id='container' class=''>
 		
 		
@@ -29,14 +34,6 @@
 				<textarea id='screen' class='border' autocomplete='off' readonly></textarea>	
 			</span>
 			<br>
-			
-			<!-- dir list 
-			<div id='dir_list_outer' class='border'>
-				<span class='section_title'>Available dirs:</span>
-				<br>
-				<div id='dir_list' class=''></div>
-			</div>
-			-->
 			
 			<!-- button panel -->
 			<div id='button_panel' class='border'>
@@ -55,20 +52,26 @@
 				<br>
 				<div id='nonpic_list'></div>
 			</div>	
-			
-					
+								
 		</span>
 		
-		
-		
-		
-		
-		
+
 	</div>
-	
+
+<!--========
+	-
+	-	CONTAINER
+	-	
+	===============================================-->
+		
+<!--==============================================
+	-
+	-	IMAGE_VIEWER
+	-	
+	-->		
 	<div id='image_viewer_outer' class='border'>
 	
-		<!--image viewer  <br>-->
+		<!--image viewer  -->
 		<div id='image_viewer_inner' class='border'>
 			<img id='image' class='border'/>
 		</div>
@@ -78,21 +81,62 @@
 				<span class='' id='image_name'>image_name</span>
 			<br>
 			Place in Directory: 
-				<span id='dir_buttons'></span>
+				<span id='dir_buttons'>	
+				</span>
 		</span>
+		<br>
 		
+		<!-- dir list -->
+		<div id='dir_list_outer' class='border'>
+			<div id='dir_list'></div>	
+		</div>	
+	
+		<!-- rmdir list -->
+		<div id='rmdir_list_outer' class='border'>
+			<div id='rmdir_list' ></div>
+		</div>	
 		
 	</div>
 	
-	<div id='dir_list_source'>
-		<div class="dir_outer">
-			<img class="x border" src="media/x.png" />&nbsp
-			<span class="dir"><!----></span>
-		</div>
-	</div>
-	<!--this.substring( 0, this.length )-->
+<!--========
+	-
+	-	IMAGE_VIEWER
+	-	
+	===============================================-->	
+
+
 	<div id='msgbox'></div>
 	
 
 </body>
+
+<!--==============================================
+	-
+	-	TEMPLATES
+	-	
+	-->
+	
+	<div id='dir_list_source' hidden>
+		<div class="dir_outer">		
+			<span class="dir"><!--NAME_HERE--></span>
+				
+		</div>
+	</div>
+	
+	
+	<div id='rmdir_source' hidden>
+		<div class="rmdir_outer dir_outer">	
+			<span class='rmdir'>remove</span>	
+		</div>
+	</div>
+
+<!--========
+	-
+	-	TEMPLATES
+	-	
+	===============================================-->
+
+
+
+
 </html>
