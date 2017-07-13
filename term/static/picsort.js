@@ -1,43 +1,75 @@
 /*
-
 	picsort.js handles javascript routines not covered by term.js (which wraps the virtual CLI)
 	This includes transferring data to and from picsort.py, which runs on the server
-	This script handles button clicks, dynamic html, image viewing, and dialogue with the backend
+	picsort.js handles button clicks, dynamic html, image viewing, and dialogue with the backend
+	
 */
 
 var removed_dirs = [];
 var selected_pic = null;
+var action = 'move';
 
-/*  button click handlers  */
-$(document).on('click','.x',function(){
-	removed_dirs.push( $(this).next().html() );
-	$(this).parent().remove();
-});
 
-//-------------------------//
+/*
+	======================================================================
+	BUTTON CLICK HANDLERS 
+*/
 
-$(document).on('click','#picsort_current_dir',function(){
-	$('#file_list_outer').fadeIn(900).css({'display':'inline-block'});
-	picsort_current_dir( null );
-});
-
-$(document).on('click','.file_list_pic', function(){
-	$('.file_list_pic').removeClass('selected_pic');
-	$(this).addClass('selected_pic');
-	view_image( $(this).html() );
+$(document)
+	//
+	//	==========================
+	//  remove dir (from view) on click
+	.on('click','.rmdir',function(){
+		var dir_index = $('.rmdir').index( $(this) )	
+		$( $('.dir_outer')[dir_index] ).remove();
+		$( $('.rmdir_outer')[dir_index] ).remove();
+	})	
 	
-	//selected_pic = $(this);
-});
-$(document).on('mouseover','*',function(e){
-	e.stopPropagation();
-	$('.file_list_pic').removeClass('hovered_pic');	
-	if ( $(this).hasClass('file_list_pic') && ! $(this).hasClass('selected_pic') ){
-		$(this).addClass('hovered_pic');
-	}
+	//
+	//  ==========================
+	//  change action on click (move vs. copy)
+	.on('click','.action',function(){
+		$('.action').removeClass('action_selected');
+		$(this).addClass('action_selected');
+	})
+
+	//  
+	//  ==========================
+	//  picsort current dir on click
+	.on('click','#picsort_current_dir',function(){
+		$('#file_list_outer').fadeIn(900).css({'display':'inline-block'});
+		picsort_current_dir( null );
+	})
+	
+	//
+	//  ==========================
+	//  change pic in image_viewer
+	.on('click','.file_list_pic', function(){
+		$('.file_list_pic').removeClass('selected_pic');
+		$(this).addClass('selected_pic');
+		view_image( $(this).html() );
+	})
+	
+	//
+	//  ==========================
+	//  remove hover style (class) from .file_list_pic when hovering elsewhere
+	.on('mouseover','*',function(e){
+		e.stopPropagation();
+		$('.file_list_pic').removeClass('hovered_pic');	
+		if ( $(this).hasClass('file_list_pic') && ! $(this).hasClass('selected_pic') ){
+			$(this).addClass('hovered_pic');
+		}
 });
 
-/*  button click handlers  */
+/*
+	BUTTON CLICK HANDLERS
+	===========================================================================
+*/
 
+
+//		=====================================
+//		VIEW IMAGE
+//
 function view_image( image_name ){
 	$('#image').attr('src', 'http://127.0.0.1:8004/picsort_thumbnails/'+image_name );
 	$('#image_name').html(image_name);
@@ -53,9 +85,13 @@ function view_image( image_name ){
 }
 
 
+//		=====================================
+//		PICSORT CURRENT DIR
+//
 function picsort_current_dir( pic_list ){
 	// Function 1: Tell picsort.py to start a server from the current_dir (in term) using throwup_server
 	// Function 2: picsort.py returns the contents of the current_dir as a json list
+	
 	if (! pic_list ){
 		submit_picsort( { 'instructions' : 'picsort_current_dir' } );
 	}
@@ -71,6 +107,9 @@ function picsort_current_dir( pic_list ){
 }
 
 
+//		=====================================
+//		AJAX CALLS
+//
 function submit_picsort( submission ){
 	//  Centralized ajax information transfer to picsort.py
 	//  Receives callback_function (same as *calling* function) + args from picsort.py
@@ -102,6 +141,10 @@ function submit_picsort( submission ){
 	});
 }
 
+
+//		=====================================
+//		POPULATE DIR LIST
+//
 var old_dir_list = 'none';
 function populate_dir_list( dir_list ){
 	//  Function 1: dir_list == null: get directory list from current_dir (in current_session)
@@ -111,41 +154,34 @@ function populate_dir_list( dir_list ){
 		submit_picsort({'instructions' : 'populate_dir_list'});		
 	}
 	else{
-		if (dir_list === old_dir_list){				// look up javascript array comparison   
+		if ( dir_list.length == old_dir_list.length && dir_list.every(function(v,i){ return v == old_dir_list[i] }) ){				  
+			//  Avoid DOM manipulation if dir_list has not changed
 			return;
 		}
 		old_dir_list = dir_list;
 		$('#dir_list').html('');	
 		$('#rmdir_list').html('');
 		
+		// 	get dir_list/rmdir_list template sources
+		var dir_list_source = $('#dir_list_source').html();
+		var rmdir_source = $('#rmdir_source').html();
+		
 		$(dir_list).each(function(){	
-			// dir_list sits next to rmdir_list
-			var dir_list_source = $('#dir_list_source').html();
-			$('#dir_list').append(
-				dir_list_source.replace('<!--NAME_HERE-->',this)	
-			);
+					
+			$('#dir_list').append( 		dir_list_source.replace('<!--NAME_HERE-->',this) );
+			$('#rmdir_list').append( 	rmdir_source );	
 			
-			var rmdir_source = $('#rmdir_source').html();
-			$('#rmdir_list').append(
-				rmdir_source
-			);	
 		});	
 		
 		if (dir_list.length == 0){	// show "None" when no directories are present
-			$('#dir_list').append(
-				'<div class="dir_outer">'+
-					'<span class="none_dir"><i>None</i>'+
-					'</span>'+
-				'</div>'		
-			);	
+			$('#dir_list').append( dir_list.source.replace('<!--NAME_HERE-->','None') );
 		}
 	}
 }
 
-//--------
-// On document load:
-//--------
+//		=====================================
+//		DOCUMENT LOAD
+//
 $(document).ready(function(){
 	populate_dir_list( null );
-	//$('#picsort_current_dir').click();
 });
