@@ -109,14 +109,34 @@ class commands(object):
 	#
 	#
 	
+	def rmdir(self,current_dir,new_cmd):
+		'''Remove directory'''
+		cmd = 'rmdir %s/%s' %(current_dir, ''.join(new_cmd.split()[1:]))
+		sp.Popen( cmd.split(' ') )
+		print json.dumps({'data':'','current_dir':current_dir,'run_dir_check':True})
+		return current_dir
+	#
+	#
+	
 	def rm(self,current_dir,new_cmd):
 		'''Destroy file/folder'''
 		cmd = ' '.join(new_cmd.split(' ')[:-1]) + ' ' + current_dir+'/'+new_cmd.split(' ')[-1]
 		sp.Popen(cmd.split(' '))
-		print json.dumps({'data':current_dir,'current_dir':current_dir,'run_dir_check':True})
+		print json.dumps({'data':'','current_dir':current_dir,'run_dir_check':True})
 		return current_dir
 	#
 	#
+	
+	def touch(self,current_dir,new_cmd):
+		cmd = 'touch %s/%s' % ( current_dir, new_cmd.split(' ')[1] )
+		bash( cmd )
+		print json.dumps({'data':'','current_dir':current_dir,'run_dir_check':True})
+		return current_dir
+
+def bash( cmd, **shell):
+	return sp.Popen(cmd if shell else cmd.split(' '),stdout=sp.PIPE,shell = shell if shell else False).communicate()[0]
+
+
 		
 def test(data):
 	with open('TEST','w') as f:
@@ -131,7 +151,7 @@ def process( new_cmd ):
 		'sg'	: 'ls -al %current_dir | grep '
 	}
 	
-	run_dir_check = False # will set to True for directory change or mkdir command
+	run_dir_check = False # will set to True for directory change or mkdir/rmdir commands
 	
 	if new_cmd == 'new session':
 		current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -178,6 +198,7 @@ def process( new_cmd ):
 def main():
 	new_cmd = json.loads(cgi.FieldStorage()['package'].value)			
 	process( new_cmd )
+	
 #	
 #			 
 
