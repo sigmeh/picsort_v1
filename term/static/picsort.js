@@ -59,6 +59,37 @@ $(document)
 		if ( $(this).hasClass('file_list_pic') && ! $(this).hasClass('selected_pic') ){
 			$(this).addClass('hovered_pic');
 		}
+	})
+	
+	//
+	//  ==========================
+	//  switch focus to pic_list
+	.on('click','#pic_list',function(){
+		$(this).focus();
+	})
+	
+	//
+	//  ==========================
+	//  iterate over pic_list with arrow keys when focused
+	.on('keydown',function(e){
+		//con( $('#pic_list').is(':focus') );
+		//con( 'screen '+$('#screen').is(':focus') );
+		
+		if( $('#pic_list').is(':focus') ){
+			switch (e.which){
+				case 38:	// Arrow up
+					con( $('.file_list_pic').filter( function(){
+						return $(this).index( $(this).hasClass('selected_pic') ) ;
+					}));
+					con( $('.file_list_pic').length );
+					break;
+				case 40:	//	Arrow down
+				
+					break;
+			}
+		}
+		
+	//})
 });
 
 /*
@@ -174,7 +205,8 @@ function populate_dir_list( dir_list ){
 		});	
 		
 		if (dir_list.length == 0){	// show "None" when no directories are present
-			$('#dir_list').append( dir_list.source.replace('<!--NAME_HERE-->','None') );
+			con('no dirs found');
+			$('#dir_list').append( dir_list_source.replace('<!--NAME_HERE-->','(No directories)') );
 		}
 	}
 }
