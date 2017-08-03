@@ -72,22 +72,40 @@ $(document)
 	//  ==========================
 	//  iterate over pic_list with arrow keys when focused
 	.on('keydown',function(e){
-		//con( $('#pic_list').is(':focus') );
-		//con( 'screen '+$('#screen').is(':focus') );
+			
+		switch (e.which){
 		
-		if( $('#pic_list').is(':focus') ){
-			switch (e.which){
-				case 38:	// Arrow up
-					con( $('.file_list_pic').filter( function(){
-						return $(this).index( $(this).hasClass('selected_pic') ) ;
-					}));
-					con( $('.file_list_pic').length );
-					break;
-				case 40:	//	Arrow down
-				
-					break;
-			}
+			//
+			// ARROW UP  -- select above file, if any
+			//
+			case 38:	
+				e.preventDefault();
+				var c = 0;
+				$('.file_list_pic').each(function(){
+					$(this).hasClass('selected_pic') && c > 0 ? 
+						$(this).removeClass('selected_pic') && $(this).prev().addClass('selected_pic') : {};
+					c++;
+				});
+				break;
+			
+			
+			//
+			//	ARROW DOWN	--  select below file, if any
+			//
+			case 40:	
+				e.preventDefault();
+				for( c=0; c < $('.file_list_pic').length - 1; c++ ){
+					var fc = $($('.file_list_pic')[c]);
+					if ( fc.hasClass('selected_pic')	 ){
+						fc.removeClass('selected_pic').next().addClass('selected_pic');
+						break;
+					}
+					
+				};
+				break;
 		}
+		view_image( $('.selected_pic').html() );
+		//}
 		
 	//})
 });
