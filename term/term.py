@@ -64,14 +64,14 @@ class commands(object):
 		
 		if cmd1 in ['~','$HOME']:
 			#	~ $HOME
-			current_dir = sp.Popen(('echo %s'%cmd1).split(),stdout=sp.PIPE).communicate()[0]
+			current_dir = bash('echo %s' % cmd1, shell=True)
 			
 		elif cmd1 in dirs:
 			#	.. , /
 			current_dir = dirs[cmd1]	
 					
 		else:
-			# Iteratively check each directory for possible multi-level traversal (e.g., cd ../../pics)
+			# Iteratively check each directory for possible multi-level traversal (e.g., cd ../../pictures)
 	
 			cd_path_list = [x for x in cmd1.split('/') if x]	# check list members individually
 			current_dir_tmp = copy.copy(current_dir)			# only change current_dir if all levels ok
@@ -121,8 +121,10 @@ class commands(object):
 	def rm(self,current_dir,new_cmd):
 		'''Destroy file/folder'''
 		cmd = ' '.join(new_cmd.split(' ')[:-1]) + ' ' + current_dir+'/'+new_cmd.split(' ')[-1]
-		sp.Popen(cmd.split(' '))
-		print json.dumps({'data':'','current_dir':current_dir,'run_dir_check':True})
+		ret_data = bash(cmd)
+		#res = sp.Popen(cmd.split(' '))
+		test(str(ret_data))
+		print json.dumps({'data':ret_data,'current_dir':current_dir,'run_dir_check':True})
 		return current_dir
 	#
 	#
@@ -134,13 +136,13 @@ class commands(object):
 		return current_dir
 
 def bash( cmd, **shell):
-	return sp.Popen(cmd if shell else cmd.split(' '),stdout=sp.PIPE,shell = shell if shell else False).communicate()[0]
-
+	res,err =  sp.Popen(cmd if shell else cmd.split(' '),stdout=sp.PIPE, stderr=sp.PIPE,shell = shell if shell else False).communicate()
+	return res if res else err
 
 		
 def test(data):
-	with open('TEST','w') as f:
-		f.write(data)
+	with open('TEST','a') as f:
+		f.write(data+'\n')
 		
 cmds = commands()		
 
@@ -169,6 +171,7 @@ def process( new_cmd ):
 		history = current_session['history']
 		cmd0 = new_cmd.split(' ')[0]
 		
+		#test(repr(commands.__dict__))
 	
 		if cmd0 in aliases:												# aliases
 			new_cmd = str(aliases[cmd0] + ' '.join(new_cmd.split(' ')[1:])).replace('%current_dir',current_dir)
@@ -177,16 +180,11 @@ def process( new_cmd ):
 			current_dir = getattr(cmds,cmd0)( current_dir=current_dir, new_cmd=new_cmd)	
 	
 		else:															# attempt to execute unknown
-			result = sp.Popen(new_cmd,stdout=sp.PIPE,stderr=sp.PIPE,shell=True)
-			stdout,stderr=result.communicate()
-			if stdout:
-				data = stdout
-			else:
-				data = stderr
-		
-			print json.dumps({	'data'			:data,
-								'current_dir'	:current_dir,
-								'run_dir_check'	:run_dir_check
+			ret_data = bash( new_cmd, shell=True)
+
+			print json.dumps({	'data'			: ret_data,
+								'current_dir'	: current_dir,
+								'run_dir_check'	: run_dir_check
 							})
 	
 		history.append(new_cmd)
