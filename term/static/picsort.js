@@ -86,8 +86,12 @@ $(document)
 						$(this).removeClass('selected_pic') && $(this).prev().addClass('selected_pic') : {};
 					c++;
 				});
-				break;
-			
+								
+				// scroll #pic_list on arrow down if .selected_pic out of view (at bottom of list)	
+				if ( $('.selected_pic')[0].offsetTop < $('#pic_list')[0].offsetTop + $('#pic_list')[0].scrollTop ){
+					$('#pic_list')[0].scrollTop -= $('.file_list_pic').height();
+				}			
+				break;		
 			
 			//
 			//	ARROW DOWN	--  select below file, if any
@@ -99,15 +103,17 @@ $(document)
 					if ( fc.hasClass('selected_pic')	 ){
 						fc.removeClass('selected_pic').next().addClass('selected_pic');
 						break;
-					}
-					
+					}				
 				};
-				break;
+				
+				// scroll #pic_list on arrow down if .selected_pic out of view (at bottom of list)
+				if ( $('.selected_pic')[0].offsetTop > ( $('#pic_list')[0].offsetTop + $('#pic_list').height() - $('.selected_pic').height()) ){
+					$('#pic_list')[0].scrollTop += $('.file_list_pic').height(); 
+				}
+				break;			
+				
 		}
 		view_image( $('.selected_pic').html() );
-		//}
-		
-	//})
 });
 
 /*
@@ -133,6 +139,14 @@ function view_image( image_name ){
 	}	
 }
 
+//
+//
+//
+$(window).on('beforeunload', function() {	// prevent #pic_list autoscroll to previous value on page reload
+    $('#pic_list').scrollTop(0);
+    $('#pic_list').scrollLeft(0);
+});
+
 
 //		=====================================
 //		PICSORT CURRENT DIR
@@ -145,6 +159,9 @@ function picsort_current_dir( pic_list ){
 		submit_picsort( { 'instructions' : 'picsort_current_dir' } );
 	}
 	else{
+		
+		$('#pic_list').html('');
+		$('#pic_list')[0].scrollTo(0,0);
 		for ( i=0; i < pic_list.length; i++ ){
 			$('#pic_list').append( 
 				'<div class="file_list_pic">'+pic_list[i]+'</div>'
