@@ -8,7 +8,7 @@
 var removed_dirs = [];
 var selected_pic = null;
 var action = 'move';
-
+var viewing_pics = false;
 
 /*
 	======================================================================
@@ -72,7 +72,9 @@ $(document)
 	//  ==========================
 	//  iterate over pic_list with arrow keys when focused
 	.on('keydown',function(e){
-			
+		if ( $('#screen').is(':focus') || ! viewing_pics ){
+			return;
+		}	
 		switch (e.which){
 		
 			//
@@ -114,12 +116,25 @@ $(document)
 				
 		}
 		view_image( $('.selected_pic').html() );
+	})
+	
+	//
+	//  ============================
+	//		Move file to (or copy file to) clicked directory
+	.on('click','.dir',function(){
+		move_or_copy_file( { dir:this, initial:true } );
+	
+		
+	
 });
 
 /*
 	BUTTON CLICK HANDLERS
 	===========================================================================
 */
+
+
+
 
 
 //		=====================================
@@ -169,43 +184,11 @@ function picsort_current_dir( pic_list ){
 		}	
 		$('.file_list_pic').first().addClass('selected_pic');
 		view_image( $('.selected_pic')[0].innerHTML );
+		viewing_pics = true;
 	}
 }
 
 
-//		=====================================
-//		AJAX CALLS
-//
-function submit_picsort( submission ){
-	//  Centralized ajax information transfer to picsort.py
-	//  Receives callback_function (same as *calling* function) + args from picsort.py
-	
-	con('Sending server request. Data in transit...');
-	
-	$.ajax({
-		method 	: 'post',
-		url		: 'picsort.py',
-		data	: { 'package' : JSON.stringify(submission) }, 
-		success : function( result ){
-			con('...Server response received.');
-			
-			var re = /\{[^]*\}/;		// extract json data from internal python prints (that get dumped here)
-			var json = result.match(re)[0];
-			
-			con( 'Python print statements from last action:'); 
-			var python_stdout = result.replace(re,'').trim();
-			con( python_stdout || 'None');
-			result = JSON.parse(json);
-
-			f = result.callback_function;
-			a = result.args;
-			con(result);
-			if ( a ){		
-				eval( f+'('+JSON.stringify(a)+')' );	//callback
-			}		
-		}
-	});
-}
 
 
 //		=====================================
@@ -246,9 +229,77 @@ function populate_dir_list( dir_list ){
 	}
 }
 
+
+
+
+
 //		=====================================
 //		DOCUMENT LOAD
 //
 $(document).ready(function(){
 	populate_dir_list( null );
 });
+
+
+
+
+//		=====================================
+//		AJAX CALLS
+//
+function submit_picsort( submission ){
+	//  Centralized ajax information transfer to picsort.py
+	//  Receives callback_function (same as *calling* function) + args from picsort.py
+	
+	con('Sending server request. Data in transit...');
+	
+	$.ajax({
+		method 	: 'post',
+		url		: 'picsort.py',
+		data	: { 'package' : JSON.stringify(submission) }, 
+		success : function( result ){
+			con('...Server response received.');
+			
+			var re = /\{[^]*\}/;		// extract json data from internal python prints (that get dumped here)
+			var json = result.match(re)[0];
+			
+			con( 'Python print statements from last action:'); 
+			var python_stdout = result.replace(re,'').trim();
+			con( python_stdout || 'None');
+			result = JSON.parse(json);
+
+			f = result.callback_function;
+			a = result.args;
+			con(result);
+			if ( a ){		
+				eval( f+'('+JSON.stringify(a)+')' );	//callback
+			}		
+		}
+	});
+}
+
+
+
+
+
+//	==============================================
+//	MOVE OR COPY FILE
+//
+function move_or_copy_file( args ){
+
+	args.initial ? submit() : receive();
+	
+	function submit(){
+		submit_picsort({
+			'instructions'	: arguments.callee.name,
+			'action'		: $('.action_selected').html(),
+			'dir'			: args.dir, 
+			'file'			: $('.selected_pic').html()
+		});
+	}
+	
+	function receive(){
+		con(args.bash_out);
+	}
+
+	
+}
