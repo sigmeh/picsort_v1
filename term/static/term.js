@@ -1,3 +1,19 @@
+/*
+
+term.js
+
+-- Part of PICSORT app contents --
+
+General logic of functionality in term.js:
+	
+	1. Receive user-typed shell commands from virtual-terminal ('term') portion of picsort app GUI 
+	2. Communicate with term.py running on the server via jquery ajax to transfer shell commands
+	3. Receive output (stdout) from a term.py subprocess executing the desired shell commands
+	4. Print shell output to virtual terminal
+	5. Call populate_dir_list (in picsort.js) to change dir_list, if necessary
+
+*/
+
 // Initialize variables
 var current_command = '';
 var current_dir = ''
@@ -12,8 +28,7 @@ function con(msg){console.log(msg);}
 
 //
 //
-//var startup_commands = 'up; up; up; cd try; cd pics; cd pics'.split(';');
-var startup_commands = 'cd ../../../try/pics/pics'.split(';');
+var startup_commands = 'cd ../../../try/pics'.split(';');
 //
 //
 
@@ -47,8 +62,8 @@ function ps(data, newline, is_command, current_dir){
 		screen_append(data);
 		newline ? screen_append('\n') : {};
 	}
-	else{			
-		for (i=0;i<data.length;i++){
+	else{				
+		for (i=0; i<data.length; i++){
 			screen_append(data[i]+'\n');
 		}
 	}
@@ -87,7 +102,6 @@ function submit(submission){
 
 // Keypress handler
 $(document).on('keydown','#screen',function(e){
-
 	switch(e.which){
 		
 		// ----- Enter ----- //
@@ -203,11 +217,6 @@ $(document).on('keydown','#screen',function(e){
 			if ( $.inArray(e.which, ignore_keys) != -1 ){
 				return;
 			}
-			else if ( ! command_key_down ){
-				current_command += e.key;
-				ps(data=e.key, newline=false, is_command=true);
-			}
-			
 			else if ( command_key_down && e.which == 86){	
 				// Moved this code from case selection (e.which == 86) where pressing v caused a bug		
 				$('#dummybox').focus();
@@ -220,12 +229,25 @@ $(document).on('keydown','#screen',function(e){
 					$('#dummybox').val('');
 				},1);
 				break;
-			} 			
+			} 	
+			else {
+				if (command_key_down){
+					// command_key_down remains true when switching windows with CMD+tab; 
+					// this code prevents term from ignoring input
+					// when returning to the browser window from another application
+					command_key_down = false;
+					$('#screen').focus();
+				}
+				
+				current_command += e.key;
+				ps(data=e.key, newline=false, is_command=true);
+			}		
 	}
 });
 
 
-$(document).on('keyup','#screen',function(e){
+
+$(document).on('keyup','*',function(e){
 	switch(e.which){
 		case 224:
 			command_key_down = false;
