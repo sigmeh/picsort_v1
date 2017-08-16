@@ -7,7 +7,7 @@
 
 var removed_dirs = [];
 var selected_pic = null;
-var action = 'move';
+var action = 'copy';
 var viewing_pics = false;
 
 /*
@@ -38,6 +38,7 @@ $(document)
 	//  picsort current dir on click
 	.on('click','#picsort_current_dir',function(){
 		$('#file_list_outer').fadeIn(900).css({'display':'inline-block'});
+		$('#image_viewer_outer').fadeIn(900).css({'display':'inline-block'});
 		picsort_current_dir( null );
 	})
 	
@@ -72,7 +73,7 @@ $(document)
 	//  ==========================
 	//  iterate over pic_list with arrow keys when focused
 	.on('keydown',function(e){
-		if ( $('#screen').is(':focus') || ! viewing_pics ){
+		if ( $('#screen').is(':focus') || ! viewing_pics ){		// do not change pic on arrow press when on #screen (or pics not yet loaded)
 			return;
 		}	
 		switch (e.which){
@@ -122,8 +123,9 @@ $(document)
 	//  ============================
 	//		Move file to (or copy file to) clicked directory
 	.on('click','.dir',function(){
-		move_or_copy_file( { dir:this, initial:true } );
-	
+		if (viewing_pics){
+			move_or_copy_file( { dir:$(this).html(), initial:true } );
+		}
 		
 	
 });
@@ -258,13 +260,16 @@ function submit_picsort( submission ){
 		data	: { 'package' : JSON.stringify(submission) }, 
 		success : function( result ){
 			con('...Server response received.');
-			
+			con(result);
 			var re = /\{[^]*\}/;		// extract json data from internal python prints (that get dumped here)
+			
 			var json = result.match(re)[0];
+			//json ? json = json[0] : json = 
 			
 			con( 'Python print statements from last action:'); 
 			var python_stdout = result.replace(re,'').trim();
 			con( python_stdout || 'None');
+			
 			result = JSON.parse(json);
 
 			f = result.callback_function;
@@ -285,20 +290,28 @@ function submit_picsort( submission ){
 //	MOVE OR COPY FILE
 //
 function move_or_copy_file( args ){
-
+	var instructions = arguments.callee.name;
+	var action_selected = $('.action_selected').html();
+	var file = $('.selected_pic').html(); 
+	
 	args.initial ? submit() : receive();
 	
 	function submit(){
 		submit_picsort({
-			'instructions'	: arguments.callee.name,
-			'action'		: $('.action_selected').html(),
+			'instructions'	: instructions,
+			'action'		: action_selected,
 			'dir'			: args.dir, 
-			'file'			: $('.selected_pic').html()
+			'file'			: file
 		});
 	}
 	
 	function receive(){
-		con(args.bash_out);
+		con('Output from previous command: '+ args.bash_out || 'None' );
+		if (action_selected == 'move'){
+			$('.file_list_pic').each(function(){
+				$(this).html() == file ? $(this).remove() && con('Moved '+file) : {};
+			});
+		}
 	}
 
 	
